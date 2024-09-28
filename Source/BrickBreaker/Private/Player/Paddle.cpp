@@ -2,6 +2,8 @@
 
 
 #include "Player/Paddle.h"
+#include "Object/Brick.h"
+#include "Object/Ball.h"
 #include "GameFramework/FloatingPawnMovement.h"
 #include <Kismet/GameplayStatics.h>
 
@@ -22,11 +24,12 @@ APaddle::APaddle()
 void APaddle::BeginPlay()
 {
 	Super::BeginPlay();
+	StaticMesh->OnComponentHit.AddDynamic(this, &APaddle::HitMesh);
 	
 	// Count brick number
-	// TArray<AActor*> Bricks;
-	// UGameplayStatics::GetAllActorsOfClass(GetWorld(), ABrick::StaticClass(), Bricks);
-	// BrickNumber = Bricks.Num();
+	TArray<AActor*> Bricks;
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ABrick::StaticClass(), Bricks);
+	BrickNumber = Bricks.Num();
 }
 
 // Called every frame
@@ -49,6 +52,16 @@ void APaddle::MoveLeftRight(float AxisValue)
 {
 	FVector Direction = FVector(0, 1, 0);
 	AddMovementInput(Direction, AxisValue);
+}
+
+void APaddle::HitMesh(UPrimitiveComponent* HitComponent, AActor* OtherActor,
+	UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
+{
+	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Paddle Hit"));
+	if (auto Ball = Cast<ABall>(OtherActor))
+	{
+		UGameplayStatics::PlaySound2D(GetWorld(), PaddleCollisionSound);
+	}
 }
 
 void APaddle::UpdateScore()

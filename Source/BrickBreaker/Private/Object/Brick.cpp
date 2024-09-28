@@ -12,14 +12,6 @@ ABrick::ABrick()
 
 	StaticMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("StaticMesh"));
 	RootComponent = StaticMesh;
-
-	// Materials
-	Mat1 = CreateDefaultSubobject<UMaterial>(TEXT("Material 1"));
-	Mat2 = CreateDefaultSubobject<UMaterial>(TEXT("Material 2"));
-	Mat3 = CreateDefaultSubobject<UMaterial>(TEXT("Material 3"));
-
-	// Sound
-	BrickCollisionSound = CreateDefaultSubobject<USoundBase>(TEXT("Brick Collision Sound"));
 }
 
 // Called when the game starts or when spawned
@@ -98,7 +90,6 @@ void ABrick::HitMesh(UPrimitiveComponent* HitComponent, AActor* OtherActor,
 		{
 			PaddleRef->UpdateBrickNumber();
 			Destroy();
-			//SetLifeSpan(0.08f);
 		}
 	}
 }

@@ -13,6 +13,9 @@ class BRICKBREAKER_API AWall : public AActor
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true")) class UStaticMeshComponent* StaticMesh;
 	
+	// Sound
+	UPROPERTY(EditDefaultsOnly, Category = "Sound") class USoundBase* WallCollisionSound;
+
 public:	
 	AWall();
 
@@ -22,4 +25,7 @@ protected:
 public:	
 	virtual void Tick(float DeltaTime) override;
 
+	UFUNCTION()
+	void HitMesh(UPrimitiveComponent* HitComponent, AActor* OtherActor,
+		UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
 };

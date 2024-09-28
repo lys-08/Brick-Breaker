@@ -2,6 +2,8 @@
 
 
 #include "Object/Wall.h"
+#include "Object/Ball.h"
+#include <Kismet/GameplayStatics.h>
 
 // Sets default values
 AWall::AWall()
@@ -16,7 +18,7 @@ AWall::AWall()
 void AWall::BeginPlay()
 {
 	Super::BeginPlay();
-	
+	StaticMesh->OnComponentHit.AddDynamic(this, &AWall::HitMesh);
 }
 
 // Called every frame
@@ -26,3 +28,12 @@ void AWall::Tick(float DeltaTime)
 
 }
 
+void AWall::HitMesh(UPrimitiveComponent* HitComponent, AActor* OtherActor,
+	UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
+{
+	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Paddle Hit"));
+	if (auto Ball = Cast<ABall>(OtherActor))
+	{
+		UGameplayStatics::PlaySound2D(GetWorld(), WallCollisionSound);
+	}
+}

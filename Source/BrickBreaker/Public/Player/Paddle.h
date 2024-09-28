@@ -16,6 +16,7 @@ class BRICKBREAKER_API APaddle : public APawn
 	UPROPERTY(EditDefaultsOnly, Category = "Sound") class USoundBase* LoseSound;
 	UPROPERTY(EditDefaultsOnly, Category = "Sound") class USoundBase* LostLifeSound;
 	UPROPERTY(EditDefaultsOnly, Category = "Sound") class USoundBase* UpSound;
+	UPROPERTY(EditDefaultsOnly, Category = "Sound") class USoundBase* PaddleCollisionSound;
 
 	UPROPERTY(Category = Pawn, VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	UPawnMovementComponent* MovementComponent;
@@ -38,6 +39,10 @@ protected:
 public:	
 	virtual void Tick(float DeltaTime) override;
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+
+	UFUNCTION()
+	void HitMesh(UPrimitiveComponent* HitComponent, AActor* OtherActor,
+		UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
 
 	void MoveLeftRight(float AxisValue);
 	void UpdateScore();

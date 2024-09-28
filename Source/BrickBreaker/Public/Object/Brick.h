@@ -31,7 +31,7 @@ class BRICKBREAKER_API ABrick : public AActor
 	UPROPERTY(EditDefaultsOnly, Category = "Niagara") UNiagaraSystem* CurrentNiagaraSystem;
 
 	// Sounds
-	UPROPERTY(EditDefaultsOnly) class USoundBase* BrickCollisionSound;
+	UPROPERTY(EditDefaultsOnly, Category = "Sound") class USoundBase* BrickCollisionSound;
 	
 public:	
 	UPROPERTY(EditAnywhere) int brickStrength = 1; // Brick strength = number of collision before destruction
