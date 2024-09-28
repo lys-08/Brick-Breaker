@@ -2,7 +2,9 @@
 
 
 #include "Object/Barrier.h"
+#include "Object/Ball.h"
 #include "Components/BoxComponent.h"
+#include <Kismet/GameplayStatics.h>
 
 // Sets default values
 ABarrier::ABarrier()
@@ -18,7 +20,10 @@ ABarrier::ABarrier()
 void ABarrier::BeginPlay()
 {
 	Super::BeginPlay();
+	BoxCollision->OnComponentBeginOverlap.AddDynamic(this, &ABarrier::OnOverlap);
 	
+	// Setting the Paddle Reference
+	PaddleRef = Cast<APaddle>(UGameplayStatics::GetActorOfClass(GetWorld(), APaddle::StaticClass()));
 }
 
 // Called every frame
@@ -28,3 +33,15 @@ void ABarrier::Tick(float DeltaTime)
 
 }
 
+void ABarrier::OnOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
+	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Barrier Overlap"));
+	if (auto Ball = Cast<ABall>(OtherActor))
+	{
+		PaddleRef->UpdateLife(-1);
+
+		Ball->StaticMesh->SetPhysicsLinearVelocity(FVector(0, 0, 0));
+		Ball->SetActorLocation(FVector(-400, 0, 30));
+	}
+}
