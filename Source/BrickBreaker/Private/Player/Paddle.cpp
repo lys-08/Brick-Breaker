@@ -3,6 +3,7 @@
 
 #include "Player/Paddle.h"
 #include "GameFramework/FloatingPawnMovement.h"
+#include <Kismet/GameplayStatics.h>
 
 // Sets default values
 APaddle::APaddle()
@@ -48,4 +49,54 @@ void APaddle::MoveLeftRight(float AxisValue)
 {
 	FVector Direction = FVector(0, 1, 0);
 	AddMovementInput(Direction, AxisValue);
+}
+
+void APaddle::UpdateScore()
+{
+	Score += 100;
+}
+
+void APaddle::UpdateLife(int diff)
+{
+	Lives += diff;
+	if (diff > 0)
+	{
+		UGameplayStatics::PlaySound2D(GetWorld(), UpSound);
+	}
+	else
+	{
+		UGameplayStatics::PlaySound2D(GetWorld(), LostLifeSound);
+
+		// Ball spawner
+		//BallRef->SetActorLocation(FVector(-400, 0, 30));
+		//BallRef->SetActorRotation(FRotator(0, 0, 0));
+
+		/*FTransform SpawnTransform = FTransform(FRotator(0, 0, 0), FVector(-400, 0, 30));
+		UWorld* MyLevel = GetWorld();
+		ABall* SpawnedActor = MyLevel->SpawnActor<ABall>(ABall::StaticClass(), SpawnTransform);*/
+
+
+		if (Lives == 0)
+		{
+			UGameplayStatics::PlaySound2D(GetWorld(), LoseSound);
+
+			/*UGameplayStatics::SetGamePaused(GetWorld(), true);
+			UUserWidget* WinUserWidget = CreateWidget<UUserWidget>(GetWorld(), GameOverWinWidgetInstance);
+			if (WinUserWidget)
+			{
+				WinUserWidget->AddToViewport();
+				if (APlayerController* PC = GetWorld()->GetFirstPlayerController())
+				{
+					PC->bShowMouseCursor = true;
+					PC->SetInputMode(FInputModeUIOnly());
+				}
+			}*/
+		}
+	}
+	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("Lives: %d"), Lives));
+}
+
+void APaddle::UpdateBrickNumber()
+{
+	BrickNumber--;
 }

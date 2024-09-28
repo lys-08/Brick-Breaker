@@ -40,4 +40,7 @@ public:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 	void MoveLeftRight(float AxisValue);
+	void UpdateScore();
+	void UpdateLife(int diff);
+	void UpdateBrickNumber();
 };

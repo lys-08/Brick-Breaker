@@ -4,10 +4,6 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-#include "../Player/Paddle.h"
-// #include "NiagaraSystem.h"
-// #include "NiagaraComponent.h"
-// #include "NiagaraFunctionLibrary.h"
 #include "Ball.generated.h"
 
 UCLASS()
@@ -16,13 +12,6 @@ class BRICKBREAKER_API ABall : public AActor
 	GENERATED_BODY()
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true")) class UStaticMeshComponent* StaticMesh;
-
-	UPROPERTY(EditAnywhere) APaddle* PaddleRef;
-
-	// Niagara System
-	// UPROPERTY(EditDefaultsOnly, Category = "Niagara") UNiagaraSystem* NiagaraSystem1;
-	// UPROPERTY(EditDefaultsOnly, Category = "Niagara") UNiagaraSystem* NiagaraSystem2;
-	// UPROPERTY(EditDefaultsOnly, Category = "Niagara") UNiagaraSystem* NiagaraSystem3;
 
 	// Sounds
 	UPROPERTY(EditDefaultsOnly) class USoundBase* BrickCollisionSound;
@@ -38,4 +27,10 @@ protected:
 public:	
 	virtual void Tick(float DeltaTime) override;
 
+	UFUNCTION() 
+	void OnOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
+		UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+	UFUNCTION() 
+	void HitMesh(UPrimitiveComponent* HitComponent, AActor* OtherActor, 
+		UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
 };
