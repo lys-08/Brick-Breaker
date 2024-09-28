@@ -25,6 +25,10 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	class UStaticMeshComponent* StaticMesh;
 
+	// Widget
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UI") TSubclassOf<class UUserWidget> GameOverLoseWidgetClass;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UI") TSubclassOf<class UUserWidget> GameOverWinWidgetClass;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite) int Score = 0;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite) int Lives = 3;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly) int BrickNumber;

@@ -4,6 +4,8 @@
 #include "Player/Paddle.h"
 #include "Object/Brick.h"
 #include "Object/Ball.h"
+#include "Blueprint/UserWidget.h"
+#include "Components/Widget.h"
 #include "GameFramework/FloatingPawnMovement.h"
 #include <Kismet/GameplayStatics.h>
 
@@ -93,17 +95,17 @@ void APaddle::UpdateLife(int diff)
 		{
 			UGameplayStatics::PlaySound2D(GetWorld(), LoseSound);
 
-			/*UGameplayStatics::SetGamePaused(GetWorld(), true);
-			UUserWidget* WinUserWidget = CreateWidget<UUserWidget>(GetWorld(), GameOverWinWidgetInstance);
-			if (WinUserWidget)
+			UGameplayStatics::SetGamePaused(GetWorld(), true);
+			UUserWidget* LoseUserWidget = CreateWidget<UUserWidget>(GetWorld(), GameOverLoseWidgetClass);
+			if (LoseUserWidget)
 			{
-				WinUserWidget->AddToViewport();
+				LoseUserWidget->AddToViewport();
 				if (APlayerController* PC = GetWorld()->GetFirstPlayerController())
 				{
 					PC->bShowMouseCursor = true;
 					PC->SetInputMode(FInputModeUIOnly());
 				}
-			}*/
+			}
 		}
 	}
 	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("Lives: %d"), Lives));
@@ -112,4 +114,21 @@ void APaddle::UpdateLife(int diff)
 void APaddle::UpdateBrickNumber()
 {
 	BrickNumber--;
+
+	if (BrickNumber == 0)
+	{
+		UGameplayStatics::PlaySound2D(GetWorld(), WinSound);
+
+		UGameplayStatics::SetGamePaused(GetWorld(), true);
+		UUserWidget* WinUserWidget = CreateWidget<UUserWidget>(GetWorld(), GameOverWinWidgetClass);
+		if (WinUserWidget)
+		{
+			WinUserWidget->AddToViewport();
+			if (APlayerController* PC = GetWorld()->GetFirstPlayerController())
+			{
+				PC->bShowMouseCursor = true;
+				PC->SetInputMode(FInputModeUIOnly());
+			}
+		}
+	}
 }
