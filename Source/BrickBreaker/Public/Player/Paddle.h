@@ -6,6 +6,8 @@
 #include "GameFramework/Pawn.h"
 #include "TimerManager.h"
 #include "../Object/Ball.h"
+#include "Sound/SoundCue.h"
+#include "Components/AudioComponent.h"
 #include "BrickBreakerGameInstance.h"
 #include "Paddle.generated.h"
 
@@ -19,6 +21,8 @@ class BRICKBREAKER_API APaddle : public APawn
 	UPROPERTY(EditDefaultsOnly, Category = "Sound") class USoundBase* LoseSound;
 	UPROPERTY(EditDefaultsOnly, Category = "Sound") class USoundBase* LostLifeSound;
 	UPROPERTY(EditDefaultsOnly, Category = "Sound") class USoundBase* PaddleCollisionSound;
+	UPROPERTY(EditDefaultsOnly, Category = "Music") USoundCue* Music;
+	UAudioComponent* AudioComponent;
 
 	UPROPERTY(Category = Pawn, VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	UPawnMovementComponent* MovementComponent;
@@ -45,6 +49,8 @@ public:
 
 	// Methods
 	APaddle();
+
+	void FadeOutSound();
 
 protected:
 	virtual void BeginPlay() override;

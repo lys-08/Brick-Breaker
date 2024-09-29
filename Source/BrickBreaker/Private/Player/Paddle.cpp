@@ -20,6 +20,9 @@ APaddle::APaddle()
 
 	MovementComponent = CreateDefaultSubobject<UPawnMovementComponent, UFloatingPawnMovement>(TEXT("MovementComponent0"));
 	MovementComponent->UpdatedComponent = StaticMesh;
+
+	AudioComponent = CreateDefaultSubobject<UAudioComponent>(TEXT("AudioComponent"));
+	AudioComponent->SetupAttachment(RootComponent);
 }
 
 // Called when the game starts or when spawned
@@ -37,8 +40,12 @@ void APaddle::BeginPlay()
 	BallRef = Cast<ABall>(UGameplayStatics::GetActorOfClass(GetWorld(), ABall::StaticClass()));
 
 	// Get Game Instance Ref
-	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Game Instance initialisation PADDLE"));
+	//GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Game Instance initialisation PADDLE"));
 	BrickBreakerGM = Cast<UBrickBreakerGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
+
+	// Music
+	AudioComponent->SetSound(Music);
+	AudioComponent->Play();
 }
 
 // Called every frame
@@ -46,6 +53,12 @@ void APaddle::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	if (GetActorLocation().X > -595 || GetActorLocation().X < -605)
+	{
+		FVector NewLocation = GetActorLocation();
+		NewLocation.X = -600;
+		SetActorLocation(NewLocation);
+	}
 }
 
 // Called to bind functionality to input
@@ -83,6 +96,7 @@ void APaddle::UpdateLife()
 
 	if (Lives == 0)
 	{
+		AudioComponent->Stop();
 		UGameplayStatics::PlaySound2D(GetWorld(), LoseSound);
 
 		BrickBreakerGM->SaveGameScoreRef->SaveLevelScore(GetWorld()->GetMapName(), Score);
