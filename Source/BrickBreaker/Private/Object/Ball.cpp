@@ -5,7 +5,6 @@
 #include <Kismet/GameplayStatics.h>
 
 
-// Sets default values
 ABall::ABall()
 {
 	PrimaryActorTick.bCanEverTick = true;
@@ -14,17 +13,30 @@ ABall::ABall()
 	RootComponent = StaticMesh;
 }
 
-// Called when the game starts or when spawned
 void ABall::BeginPlay()
 {
 	Super::BeginPlay();
 
 	StaticMesh->AddImpulse(FVector(-1000, 0, 0), NAME_None, true);
+	MaxSpeed = FVector(-1000, 0, 0).Size();
+	MinSpeed = FVector(-900, 0, 0).Size();
 }
 
-// Called every frame
 void ABall::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	FVector CurrentVelocity = StaticMesh->GetComponentVelocity();
+	float CurrentSpeed = CurrentVelocity.Size();
+
+	if (CurrentSpeed > MaxSpeed)
+	{
+		FVector NewVelocity = CurrentVelocity.GetSafeNormal() * MaxSpeed;
+		StaticMesh->SetPhysicsLinearVelocity(NewVelocity);
+	}
+	if (CurrentSpeed < MinSpeed)
+	{
+		FVector NewVelocity = CurrentVelocity.GetSafeNormal() * MinSpeed;
+		StaticMesh->SetPhysicsLinearVelocity(NewVelocity);
+	}
 }

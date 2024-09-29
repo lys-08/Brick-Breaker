@@ -77,50 +77,44 @@ void APaddle::UpdateScore()
 	Score += 100;
 }
 
-void APaddle::UpdateLife(int diff)
+void APaddle::UpdateLife()
 {
-	Lives += diff;
-	if (diff > 0)
+	Lives --;
+
+	if (Lives == 0)
 	{
-		UGameplayStatics::PlaySound2D(GetWorld(), UpSound);
+		UGameplayStatics::PlaySound2D(GetWorld(), LoseSound);
+
+		BrickBreakerGM->SaveGameScoreRef->SaveLevelScore(GetWorld()->GetMapName(), Score);
+
+		UGameplayStatics::SetGamePaused(GetWorld(), true);
+		UUserWidget* LoseUserWidget = CreateWidget<UUserWidget>(GetWorld(), GameOverLoseWidgetClass);
+		if (LoseUserWidget)
+		{
+			LoseUserWidget->AddToViewport();
+			if (APlayerController* PC = GetWorld()->GetFirstPlayerController())
+			{
+				PC->bShowMouseCursor = true;
+				PC->SetInputMode(FInputModeUIOnly());
+			}
+		}
 	}
+
 	else
 	{
-		if (Lives == 0)
+		UGameplayStatics::PlaySound2D(GetWorld(), LostLifeSound);
+
+		BallRef->StaticMesh->SetPhysicsLinearVelocity(FVector(0, 0, 0));
+		BallRef->SetActorLocation(FVector(-400, 0, 30));
+
+		UUserWidget* CountdownUserWidget = CreateWidget<UUserWidget>(GetWorld(), CountdownWidgetClass);
+		if (CountdownUserWidget)
 		{
-			UGameplayStatics::PlaySound2D(GetWorld(), LoseSound);
-
-			BrickBreakerGM->SaveGameScoreRef->SaveLevelScore(GetWorld()->GetMapName(), Score);
-
-			UGameplayStatics::SetGamePaused(GetWorld(), true);
-			UUserWidget* LoseUserWidget = CreateWidget<UUserWidget>(GetWorld(), GameOverLoseWidgetClass);
-			if (LoseUserWidget)
-			{
-				LoseUserWidget->AddToViewport();
-				if (APlayerController* PC = GetWorld()->GetFirstPlayerController())
-				{
-					PC->bShowMouseCursor = true;
-					PC->SetInputMode(FInputModeUIOnly());
-				}
-			}
+			CountdownUserWidget->AddToViewport();
 		}
 
-		else
-		{
-			UGameplayStatics::PlaySound2D(GetWorld(), LostLifeSound);
-
-			BallRef->StaticMesh->SetPhysicsLinearVelocity(FVector(0, 0, 0));
-			BallRef->SetActorLocation(FVector(-400, 0, 30));
-
-			UUserWidget* CountdownUserWidget = CreateWidget<UUserWidget>(GetWorld(), CountdownWidgetClass);
-			if (CountdownUserWidget)
-			{
-				CountdownUserWidget->AddToViewport();
-			}
-
-			Countdown = 3;
-			GetWorld()->GetTimerManager().SetTimer(CountdownTimerHandle, [this, CountdownUserWidget]() { CountdownTick(CountdownUserWidget); }, 1.0f, true);
-		}
+		Countdown = 3;
+		GetWorld()->GetTimerManager().SetTimer(CountdownTimerHandle, [this, CountdownUserWidget]() { CountdownTick(CountdownUserWidget); }, 1.0f, true);
 	}
 }
 
@@ -132,6 +126,7 @@ void APaddle::UpdateBrickNumber()
 	{
 		UGameplayStatics::PlaySound2D(GetWorld(), WinSound);
 
+		Score += Lives * 1500;
 		BrickBreakerGM->SaveGameScoreRef->SaveLevelScore(GetWorld()->GetMapName(), Score);
 
 		UGameplayStatics::SetGamePaused(GetWorld(), true);

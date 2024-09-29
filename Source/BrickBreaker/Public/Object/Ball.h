@@ -16,6 +16,9 @@ public:
 
 	ABall();
 
+	float MaxSpeed;
+	float MinSpeed;
+
 protected:
 	virtual void BeginPlay() override;
 

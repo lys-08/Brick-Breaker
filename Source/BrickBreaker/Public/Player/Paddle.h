@@ -18,7 +18,6 @@ class BRICKBREAKER_API APaddle : public APawn
 	UPROPERTY(EditDefaultsOnly, Category = "Sound") class USoundBase* WinSound;
 	UPROPERTY(EditDefaultsOnly, Category = "Sound") class USoundBase* LoseSound;
 	UPROPERTY(EditDefaultsOnly, Category = "Sound") class USoundBase* LostLifeSound;
-	UPROPERTY(EditDefaultsOnly, Category = "Sound") class USoundBase* UpSound;
 	UPROPERTY(EditDefaultsOnly, Category = "Sound") class USoundBase* PaddleCollisionSound;
 
 	UPROPERTY(Category = Pawn, VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
@@ -60,7 +59,7 @@ public:
 
 	void MoveLeftRight(float AxisValue);
 	void UpdateScore();
-	void UpdateLife(int diff);
+	void UpdateLife();
 	void UpdateBrickNumber();
 	void CountdownTick(UUserWidget* UserWidget);
 };

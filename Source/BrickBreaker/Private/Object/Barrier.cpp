@@ -39,6 +39,6 @@ void ABarrier::OnOverlap(UPrimitiveComponent* OverlappedComponent, AActor* Other
 	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Barrier Overlap"));
 	if (auto Ball = Cast<ABall>(OtherActor))
 	{
-		PaddleRef->UpdateLife(-1);
+		PaddleRef->UpdateLife();
 	}
 }
