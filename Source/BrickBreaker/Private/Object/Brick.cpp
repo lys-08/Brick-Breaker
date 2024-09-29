@@ -54,24 +54,28 @@ void ABrick::UpdateBrickColor()
 
 void ABrick::OnNiagaraFinished(UNiagaraComponent* NiagaraComponent)
 {
-	FTimerHandle DestroyTimerHandle;
+	if (NiagaraComponent)
+	{
+		FTimerHandle DestroyTimerHandle;
 
-	GetWorld()->GetTimerManager().SetTimer(DestroyTimerHandle,
-		[NiagaraComponent]()
-		{
-			if (NiagaraComponent)
+		TWeakObjectPtr<UNiagaraComponent> WeakNiagaraComponent = NiagaraComponent;
+
+		GetWorld()->GetTimerManager().SetTimer(DestroyTimerHandle,
+			[WeakNiagaraComponent]()
 			{
-				NiagaraComponent->DestroyComponent();
-			}
-		},
-		2.0f,
-		false);
+				if (WeakNiagaraComponent.IsValid()) 
+				{
+					WeakNiagaraComponent->DestroyComponent();
+				}
+			},
+			2.0f,
+			false);
+	}
 }
 
 void ABrick::HitMesh(UPrimitiveComponent* HitComponent, AActor* OtherActor,
 	UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
 {
-	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Brick Hit"));
 	if (auto Ball = Cast<ABall>(OtherActor))
 	{
 		PaddleRef->UpdateScore();

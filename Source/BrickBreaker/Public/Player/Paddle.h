@@ -6,6 +6,7 @@
 #include "GameFramework/Pawn.h"
 #include "TimerManager.h"
 #include "../Object/Ball.h"
+#include "BrickBreakerGameInstance.h"
 #include "Paddle.generated.h"
 
 UCLASS()
@@ -24,6 +25,8 @@ class BRICKBREAKER_API APaddle : public APawn
 	UPawnMovementComponent* MovementComponent;
 
 	ABall* BallRef;
+
+	UBrickBreakerGameInstance* BrickBreakerGM;
 
 public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))

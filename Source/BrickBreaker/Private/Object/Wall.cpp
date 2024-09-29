@@ -31,7 +31,6 @@ void AWall::Tick(float DeltaTime)
 void AWall::HitMesh(UPrimitiveComponent* HitComponent, AActor* OtherActor,
 	UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
 {
-	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Paddle Hit"));
 	if (auto Ball = Cast<ABall>(OtherActor))
 	{
 		UGameplayStatics::PlaySound2D(GetWorld(), WallCollisionSound);

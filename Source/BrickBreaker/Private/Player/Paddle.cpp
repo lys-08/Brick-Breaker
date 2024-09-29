@@ -35,6 +35,10 @@ void APaddle::BeginPlay()
 
 	// Setting the Ball Reference
 	BallRef = Cast<ABall>(UGameplayStatics::GetActorOfClass(GetWorld(), ABall::StaticClass()));
+
+	// Get Game Instance Ref
+	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Game Instance initialisation PADDLE"));
+	BrickBreakerGM = Cast<UBrickBreakerGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
 }
 
 // Called every frame
@@ -62,7 +66,6 @@ void APaddle::MoveLeftRight(float AxisValue)
 void APaddle::HitMesh(UPrimitiveComponent* HitComponent, AActor* OtherActor,
 	UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
 {
-	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Paddle Hit"));
 	if (auto Ball = Cast<ABall>(OtherActor))
 	{
 		UGameplayStatics::PlaySound2D(GetWorld(), PaddleCollisionSound);
@@ -86,6 +89,8 @@ void APaddle::UpdateLife(int diff)
 		if (Lives == 0)
 		{
 			UGameplayStatics::PlaySound2D(GetWorld(), LoseSound);
+
+			BrickBreakerGM->SaveGameScoreRef->SaveLevelScore(GetWorld()->GetMapName(), Score);
 
 			UGameplayStatics::SetGamePaused(GetWorld(), true);
 			UUserWidget* LoseUserWidget = CreateWidget<UUserWidget>(GetWorld(), GameOverLoseWidgetClass);
@@ -117,7 +122,6 @@ void APaddle::UpdateLife(int diff)
 			GetWorld()->GetTimerManager().SetTimer(CountdownTimerHandle, [this, CountdownUserWidget]() { CountdownTick(CountdownUserWidget); }, 1.0f, true);
 		}
 	}
-	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("Lives: %d"), Lives));
 }
 
 void APaddle::UpdateBrickNumber()
@@ -127,6 +131,8 @@ void APaddle::UpdateBrickNumber()
 	if (BrickNumber == 0)
 	{
 		UGameplayStatics::PlaySound2D(GetWorld(), WinSound);
+
+		BrickBreakerGM->SaveGameScoreRef->SaveLevelScore(GetWorld()->GetMapName(), Score);
 
 		UGameplayStatics::SetGamePaused(GetWorld(), true);
 		UUserWidget* WinUserWidget = CreateWidget<UUserWidget>(GetWorld(), GameOverWinWidgetClass);
