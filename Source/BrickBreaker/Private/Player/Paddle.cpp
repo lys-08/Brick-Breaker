@@ -32,6 +32,9 @@ void APaddle::BeginPlay()
 	TArray<AActor*> Bricks;
 	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ABrick::StaticClass(), Bricks);
 	BrickNumber = Bricks.Num();
+
+	// Setting the Ball Reference
+	BallRef = Cast<ABall>(UGameplayStatics::GetActorOfClass(GetWorld(), ABall::StaticClass()));
 }
 
 // Called every frame
@@ -80,17 +83,6 @@ void APaddle::UpdateLife(int diff)
 	}
 	else
 	{
-		UGameplayStatics::PlaySound2D(GetWorld(), LostLifeSound);
-
-		// Ball spawner
-		//BallRef->SetActorLocation(FVector(-400, 0, 30));
-		//BallRef->SetActorRotation(FRotator(0, 0, 0));
-
-		/*FTransform SpawnTransform = FTransform(FRotator(0, 0, 0), FVector(-400, 0, 30));
-		UWorld* MyLevel = GetWorld();
-		ABall* SpawnedActor = MyLevel->SpawnActor<ABall>(ABall::StaticClass(), SpawnTransform);*/
-
-
 		if (Lives == 0)
 		{
 			UGameplayStatics::PlaySound2D(GetWorld(), LoseSound);
@@ -106,6 +98,23 @@ void APaddle::UpdateLife(int diff)
 					PC->SetInputMode(FInputModeUIOnly());
 				}
 			}
+		}
+
+		else
+		{
+			UGameplayStatics::PlaySound2D(GetWorld(), LostLifeSound);
+
+			BallRef->StaticMesh->SetPhysicsLinearVelocity(FVector(0, 0, 0));
+			BallRef->SetActorLocation(FVector(-400, 0, 30));
+
+			UUserWidget* CountdownUserWidget = CreateWidget<UUserWidget>(GetWorld(), CountdownWidgetClass);
+			if (CountdownUserWidget)
+			{
+				CountdownUserWidget->AddToViewport();
+			}
+
+			Countdown = 3;
+			GetWorld()->GetTimerManager().SetTimer(CountdownTimerHandle, [this, CountdownUserWidget]() { CountdownTick(CountdownUserWidget); }, 1.0f, true);
 		}
 	}
 	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("Lives: %d"), Lives));
@@ -130,5 +139,20 @@ void APaddle::UpdateBrickNumber()
 				PC->SetInputMode(FInputModeUIOnly());
 			}
 		}
+	}
+}
+
+void APaddle::CountdownTick(UUserWidget* UserWidget)
+{
+	if (Countdown > 0)
+	{
+		Countdown--;
+	}
+	else
+	{
+		GetWorld()->GetTimerManager().ClearTimer(CountdownTimerHandle);
+
+		UserWidget->RemoveFromParent();
+		BallRef->StaticMesh->SetPhysicsLinearVelocity(FVector(-800, 0, 0));
 	}
 }

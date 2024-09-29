@@ -40,8 +40,5 @@ void ABarrier::OnOverlap(UPrimitiveComponent* OverlappedComponent, AActor* Other
 	if (auto Ball = Cast<ABall>(OtherActor))
 	{
 		PaddleRef->UpdateLife(-1);
-
-		Ball->StaticMesh->SetPhysicsLinearVelocity(FVector(0, 0, 0));
-		Ball->SetActorLocation(FVector(-400, 0, 30));
 	}
 }

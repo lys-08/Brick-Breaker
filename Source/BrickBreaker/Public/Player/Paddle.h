@@ -4,6 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Pawn.h"
+#include "TimerManager.h"
+#include "../Object/Ball.h"
 #include "Paddle.generated.h"
 
 UCLASS()
@@ -21,6 +23,8 @@ class BRICKBREAKER_API APaddle : public APawn
 	UPROPERTY(Category = Pawn, VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	UPawnMovementComponent* MovementComponent;
 
+	ABall* BallRef;
+
 public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	class UStaticMeshComponent* StaticMesh;
@@ -28,10 +32,13 @@ public:
 	// Widget
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UI") TSubclassOf<class UUserWidget> GameOverLoseWidgetClass;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UI") TSubclassOf<class UUserWidget> GameOverWinWidgetClass;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UI") TSubclassOf<class UUserWidget> CountdownWidgetClass;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite) int Score = 0;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite) int Lives = 3;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly) int BrickNumber;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly) int Countdown;
+	FTimerHandle CountdownTimerHandle;
 
 
 	// Methods
@@ -52,4 +59,5 @@ public:
 	void UpdateScore();
 	void UpdateLife(int diff);
 	void UpdateBrickNumber();
+	void CountdownTick(UUserWidget* UserWidget);
 };
